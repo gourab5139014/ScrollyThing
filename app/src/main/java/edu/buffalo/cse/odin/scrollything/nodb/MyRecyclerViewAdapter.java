@@ -1,4 +1,4 @@
-package edu.buffalo.cse.odin.scrollything;
+package edu.buffalo.cse.odin.scrollything.nodb;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +9,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import edu.buffalo.cse.odin.scrollything.R;
+
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
     /*
-    (DONE) Refer Basic RecyclerView operations https://stackoverflow.com/questions/26517855/using-the-recyclerview-with-a-database
     TODO Refer for CursorAdapter and DB Operations https://stackoverflow.com/questions/26517855/using-the-recyclerview-with-a-database
     TODO Refer for RecyclerView Lifecycle https://stackoverflow.com/questions/37674692/what-is-lifecycle-for-recyclerview-adapter
      */
@@ -19,7 +20,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
-    MyRecyclerViewAdapter(Context context, List<String> data){
+    public MyRecyclerViewAdapter(Context context, List<String> data){
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -51,7 +52,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
         ViewHolder(View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.tvAnimalName);
+            myTextView = itemView.findViewById(R.id.area);
 //            itemView.setOnClickListener(this);
         }
 
