@@ -19,7 +19,11 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initUI_nodb();
+//        initUI_nodb();
+        initUI_realm();
+    }
+
+    private void initUI_realm() {
     }
 
     private void initUI_nodb(){
