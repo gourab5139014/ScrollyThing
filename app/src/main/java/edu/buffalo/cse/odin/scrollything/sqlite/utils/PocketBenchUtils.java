@@ -30,41 +30,47 @@ import java.io.IOException;
 import edu.buffalo.cse.odin.scrollything.sqlite.Constants;
 
 public class PocketBenchUtils {
-    static JSONObject workloadJsonObject;
+    public static final String TAG = "PocketData";
+    public static JSONObject workloadJsonObject;
 
     // Additional global config parameters:
-    static String database;
-    static String workload;
-    static String governor;
-    static String delay;
+    public static String database;
+    public static String workload;
+    public static String governor;
+    public static String delay;
 
-    public String jsonToString(Context context, int workload){
+    // Constants
+    public static String SQLiteDBName = "SQLBenchmark"; // Same of SQLiteDatabase on android storage. Explore /data/data/edu.buffalo.cse.odin.scrollything/databases. Other one is "BDBBenchmark"
+    public static String jdbcUrl = "jdbc:sqlite://data/data/edu.buffalo.cse.odin.scrollything.sqlite/databases/"; //TODO Put package name here
 
+    public static String jsonToString(Context context, int workload){
+        Log.d(PocketBenchUtils.TAG, "Inside PocketBenchUtils.jsonToString()");
         String line;
-        String finalString = "";
-
+        StringBuilder finalString = new StringBuilder();
         try {
 
             InputStream is = context.getResources().openRawResource(workload);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
+            Log.d(PocketBenchUtils.TAG, "PocketBenchUtils.jsonToString() : String reading started");
             while((line = br.readLine()) != null){
                 if(!line.contains("sql")) {
                     line = line.replaceAll("\\s+", "");
-                    finalString = finalString + line;
+                    finalString.append(line);
                 }
                 else {
-                    finalString = finalString + line;
+                    finalString.append(line);
                 }
             }
+//            Log.d(PocketBenchUtils.TAG, "PocketBenchUtils.jsonToString() : String reading completed");
         } catch (IOException e) {
+//            Log.e(PocketBenchUtils.TAG, "IOException inside PocketBenchUtils.jsonToString()");
             e.printStackTrace();
         }
-
-        return finalString;
+//        Log.d(PocketBenchUtils.TAG, "Returning from PocketBenchUtils.jsonToString()");
+        return finalString.toString();
     }
 
-    public JSONObject jsonStringToObject(String jsonString){
+    public static JSONObject jsonStringToObject(String jsonString){
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(jsonString);
@@ -75,7 +81,7 @@ public class PocketBenchUtils {
         return jsonObject;
     }
 
-    public int sleepThread(int interval) {
+    public static int sleepThread(int interval) {
 
         // Adjust delay time if necessary -- default is lognormal distribution, per parameter:
         if (PocketBenchUtils.delay.equals("0ms")) {
@@ -98,12 +104,11 @@ public class PocketBenchUtils {
     }
 
 
-    public Connection jdbcConnection(String dbName) {
+    public static Connection jdbcConnection(String dbName) {
         if(dbName == null){
             return null;
         }
-//        String url = "jdbc:sqlite://data/data/com.example.benchmark_withjson/databases/" + dbName;
-        String url = Constants.jdbcUrl + dbName;
+        String url = PocketBenchUtils.jdbcUrl + dbName;
         Connection con;
         try {
             Class.forName("SQLite.JDBCDriver");
@@ -126,7 +131,7 @@ public class PocketBenchUtils {
         return con;
     }
 
-    public int findMissingQueries(Context context){
+    public static int findMissingQueries(Context context){
 
         // Signal calling script that benchmark run has finished:
         try {
@@ -191,7 +196,7 @@ public class PocketBenchUtils {
         return 0;
     }
 
-    public int putMarker(String mark) {
+    public static int putMarker(String mark) {
         PrintWriter outStream = null;
         try{
             FileOutputStream fos = new FileOutputStream("/sys/kernel/debug/tracing/trace_marker");
@@ -211,7 +216,7 @@ public class PocketBenchUtils {
         return 0;
     }
 
-    public boolean doesDBExist(Context context, String dbPath){
+    public static boolean doesDBExist(Context context, String dbPath){
         File dbFile = context.getDatabasePath(dbPath);
         return dbFile.exists();
     }
@@ -223,7 +228,6 @@ public class PocketBenchUtils {
         return mi.availMem;
     }
 
-    //TODO Ask Carl about the mysterious MainActivity.a parameter
 //    public void restrictHeapTo50(){
 //        //noinspection MismatchedReadAndWriteOfArray
 //        MainActivity.a = new int[25165824];
