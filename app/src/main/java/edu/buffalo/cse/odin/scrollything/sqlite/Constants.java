@@ -18,4 +18,5 @@ public class Constants {
     //CREATE TABLE STATEMENTS
     public static final String CREATE_TB="CREATE TABLE b_TB(id INTEGER PRIMARY KEY AUTOINCREMENT,"
             + "name TEXT NOT NULL,position TEXT NOT NULL);";
+    public static String jdbcUrl = "jdbc:sqlite://data/data/com.example.benchmark_withjson/databases/"; //TODO Put package name here
 }
