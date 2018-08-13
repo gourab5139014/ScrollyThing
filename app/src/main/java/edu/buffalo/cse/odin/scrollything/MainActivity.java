@@ -1,32 +1,95 @@
 package edu.buffalo.cse.odin.scrollything;
 
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import edu.buffalo.cse.odin.scrollything.nodb.MyRecyclerViewAdapter;
-import edu.buffalo.cse.odin.scrollything.realm.Data;
-import edu.buffalo.cse.odin.scrollything.realm.RealmDataAdapter;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
+import edu.buffalo.cse.odin.scrollything.models.RecyclerRow;
+import edu.buffalo.cse.odin.scrollything.nodb.NoDBAdapter;
+import edu.buffalo.cse.odin.scrollything.sqlite.MyAdapter;
+import edu.buffalo.cse.odin.scrollything.sqlite.SqliteDBAdapter;
 
 public class MainActivity extends AppCompatActivity{
-    MyRecyclerViewAdapter adapter;
-    private Realm mRealm;
+    NoDBAdapter noDBAdapter;
+    MyAdapter myAdapter;
+    ArrayList<RecyclerRow> rows = new ArrayList<>(); // Currently just being used for SQLiteDBAdapter
+//    private Realm mRealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initUI_nodb();
+//        initUI_nodb();
+        initUI_sqlite();
         // Turn on this for RealmDB Operations
 //        mRealm = Realm.getDefaultInstance();
 //        initUI_realm();
+    }
+
+    private void initUI_sqlite(){
+        RecyclerView recyclerView = findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        noDBAdapter = new NoDBAdapter(this, animalNames);
+        myAdapter = new MyAdapter(this, rows);
+//        recyclerView.setAdapter(noDBAdapter);
+        fetchSqlite();
+        if(rows.size()>1)
+        {
+            recyclerView.setAdapter(myAdapter);
+        }
+    }
+
+    private void fetchSqlite() {
+        SqliteDBAdapter db=new SqliteDBAdapter(this);
+        db.openDB();
+        rows.clear();
+        Cursor c=db.getAllRows();
+        while (c.moveToNext()) //TODO This needs to be specific for the benchmark. Populate this.rows here
+        {
+//            int id=c.getInt(0);
+            String name=c.getString(1);
+//            String pos=c.getString(2);
+            //CREATE PLAYER
+//            Player p=new Player(name,pos,id);
+//            players.add(p);
+        }
+    }
+
+
+
+    private void initUI_nodb(){
+        // data to populate the RecyclerView with
+        ArrayList<String> rows = new ArrayList<>();
+        rows.add("Horse");
+        rows.add("Cow");
+        rows.add("Camel");
+        rows.add("Sheep");
+        rows.add("Goat");
+        rows.add("Horse");
+        rows.add("Cow");
+        rows.add("Camel");
+        rows.add("Sheep");
+        rows.add("Goat");
+        rows.add("Horse");
+        rows.add("Cow");
+        rows.add("Camel");
+        rows.add("Sheep");
+        rows.add("Goat");
+        rows.add("Horse");
+        rows.add("Cow");
+        rows.add("Camel");
+        rows.add("Sheep");
+        rows.add("Goat");
+        // set up the RecyclerView
+        RecyclerView recyclerView = findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        noDBAdapter = new NoDBAdapter(this, rows);
+//        noDBAdapter.setClickListener(this);
+        recyclerView.setAdapter(noDBAdapter);
     }
 
     private void initUI_realm() {
@@ -50,34 +113,4 @@ public class MainActivity extends AppCompatActivity{
 //        mRecycler.setAdapter(mAdapter);
     }
 
-    private void initUI_nodb(){
-        // data to populate the RecyclerView with
-        ArrayList<String> animalNames = new ArrayList<>();
-        animalNames.add("Horse");
-        animalNames.add("Cow");
-        animalNames.add("Camel");
-        animalNames.add("Sheep");
-        animalNames.add("Goat");
-        animalNames.add("Horse");
-        animalNames.add("Cow");
-        animalNames.add("Camel");
-        animalNames.add("Sheep");
-        animalNames.add("Goat");
-        animalNames.add("Horse");
-        animalNames.add("Cow");
-        animalNames.add("Camel");
-        animalNames.add("Sheep");
-        animalNames.add("Goat");
-        animalNames.add("Horse");
-        animalNames.add("Cow");
-        animalNames.add("Camel");
-        animalNames.add("Sheep");
-        animalNames.add("Goat");
-        // set up the RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new MyRecyclerViewAdapter(this, animalNames);
-//        adapter.setClickListener(this);
-        recyclerView.setAdapter(adapter);
-    }
 }

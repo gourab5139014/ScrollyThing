@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import edu.buffalo.cse.odin.scrollything.R;
+import edu.buffalo.cse.odin.scrollything.models.Data;
 import io.realm.Realm;
 import io.realm.RealmResults;
 

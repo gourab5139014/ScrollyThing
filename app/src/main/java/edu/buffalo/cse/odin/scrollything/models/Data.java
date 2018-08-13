@@ -1,4 +1,4 @@
-package edu.buffalo.cse.odin.scrollything.realm;
+package edu.buffalo.cse.odin.scrollything.models;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

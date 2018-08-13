@@ -1,9 +1,11 @@
-package edu.buffalo.cse.odin.scrollything.sqlite;
+package edu.buffalo.cse.odin.scrollything.sqlite.utils;
 
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import edu.buffalo.cse.odin.scrollything.sqlite.Constants;
 
 /**
  * Created by Hp on 3/17/2016.

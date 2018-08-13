@@ -11,7 +11,7 @@ import java.util.List;
 
 import edu.buffalo.cse.odin.scrollything.R;
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
+public class NoDBAdapter extends RecyclerView.Adapter<NoDBAdapter.ViewHolder> {
     /*
     TODO Refer for CursorAdapter and DB Operations https://stackoverflow.com/questions/26517855/using-the-recyclerview-with-a-database
     TODO Refer for RecyclerView Lifecycle https://stackoverflow.com/questions/37674692/what-is-lifecycle-for-recyclerview-adapter
@@ -20,7 +20,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
-    public MyRecyclerViewAdapter(Context context, List<String> data){
+    public NoDBAdapter(Context context, List<String> data){
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
