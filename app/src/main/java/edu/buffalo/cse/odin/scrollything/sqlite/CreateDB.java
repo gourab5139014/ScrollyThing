@@ -31,11 +31,11 @@ public class CreateDB {
             return 1;
         }
 
-        Connection con = PocketBenchUtils.jdbcConnection("BDBBenchmark");
-        tester = populateBdb(jsonObject, con);
-        if(tester != 0){
-            return 1;
-        }
+//        Connection con = PocketBenchUtils.jdbcConnection("BDBBenchmark");
+//        tester = populateBdb(jsonObject, con);
+//        if(tester != 0){
+//            return 1;
+//        }
 
         return 0;
     }
