@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity{
         myAdapter = new MyAdapter(this, rows);
 //        recyclerView.setAdapter(noDBAdapter);
         fetchSqlite();
+        Log.e(PocketBenchUtils.TAG,"Rows returned -- "+rows.size());
         if(rows.size()>1)
         {
             recyclerView.setAdapter(myAdapter);
@@ -101,12 +102,13 @@ public class MainActivity extends AppCompatActivity{
 
             //Run the queries specified in the JSON on the newly created databases
             Queries queries = new Queries(this);
-            tester = queries.startQueries();
-            if (tester != 0){
-                Log.d(PocketBenchUtils.TAG, "Trying to kill MainActivity");
-                this.finishAffinity();
-            }
-            Log.d(PocketBenchUtils.TAG, "NOT killing MainActivity");
+            rows = queries.startQueries();
+//            if (tester != 0){
+//                Log.d(PocketBenchUtils.TAG, "Trying to kill MainActivity");
+//                this.finishAffinity();
+//            }
+//            Log.d(PocketBenchUtils.TAG, "NOT killing MainActivity");
+
             //Find what queries were not executed successfully in the SQL or BDB traces
 //            PocketBenchUtils.findMissingQueries(this);
 //            //Calculate total time of the traces

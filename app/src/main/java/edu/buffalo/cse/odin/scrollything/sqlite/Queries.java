@@ -14,9 +14,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import android.util.Log;
 
+import edu.buffalo.cse.odin.scrollything.models.RecyclerRow;
 import edu.buffalo.cse.odin.scrollything.sqlite.utils.PocketBenchUtils;
 
 public class Queries {
@@ -30,41 +32,45 @@ public class Queries {
         context = inContext;
     }
 
-    public int startQueries(){
+    public ArrayList<RecyclerRow> startQueries(){
+//        int tester;
+//        String PDE = "PocketData";
+        Log.d(PocketBenchUtils.TAG, "Start startQueries()");
+        ArrayList<RecyclerRow> dataRows = null;
+//        PocketBenchUtils.putMarker("{\"EVENT\":\"Parameters\", \"Database\":\"" + PocketBenchUtils.database + "\", \"Workload\":\"" + PocketBenchUtils.workload + "\", \"Governor\":\"" + PocketBenchUtils.governor + "\", \"Delay\":\"" + PocketBenchUtils.delay + "\"}");
+//        PocketBenchUtils.putMarker("START: App started\n");
+//        PocketBenchUtils.putMarker("{\"EVENT\":\"" + PocketBenchUtils.database + "_START\"}");
 
-        int tester;
-        String PDE = "PocketData";
-
-        Log.d(PDE, "Start startQueries()");
-        PocketBenchUtils.putMarker("{\"EVENT\":\"Parameters\", \"Database\":\"" + PocketBenchUtils.database + "\", \"Workload\":\"" + PocketBenchUtils.workload + "\", \"Governor\":\"" + PocketBenchUtils.governor + "\", \"Delay\":\"" + PocketBenchUtils.delay + "\"}");
-        PocketBenchUtils.putMarker("START: App started\n");
-        PocketBenchUtils.putMarker("{\"EVENT\":\"" + PocketBenchUtils.database + "_START\"}");
-
-        if ((PocketBenchUtils.database.equals("SQL")) || (PocketBenchUtils.database.equals("WAL"))) {
-            Log.d(PDE, "Testing SQL");
-            tester = sqlQueries();
-        } else if ((PocketBenchUtils.database.equals("BDB")) || (PocketBenchUtils.database.equals("BDB100"))) {
-            Log.d(PDE, "Testing BDB");
-            tester = bdbQueries();
-        } else {
-            Log.d(PDE, "Error -- Unknown Database Requested");
-            return 1;
-        }
-        if (tester != 0) {
-            Log.d(PDE, "Error -- Bad Benchmark Result");
-            return 1;
+        if (PocketBenchUtils.database.equals("SQL")) {
+            Log.d(PocketBenchUtils.TAG, "Testing SQL");
+            dataRows = sqlQueries();
         }
 
-        Log.d(PDE, "End startQueries()");
-        PocketBenchUtils.putMarker("{\"EVENT\":\"" + PocketBenchUtils.database + "_END\"}");
-        PocketBenchUtils.putMarker("END: app finished\n");
+//        if ((PocketBenchUtils.database.equals("SQL")) || (PocketBenchUtils.database.equals("WAL"))) {
+//            Log.d(PDE, "Testing SQL");
+//            tester = sqlQueries();
+//        } else if ((PocketBenchUtils.database.equals("BDB")) || (PocketBenchUtils.database.equals("BDB100"))) {
+//            Log.d(PDE, "Testing BDB");
+//            tester = bdbQueries();
+//        } else {
+//            Log.d(PDE, "Error -- Unknown Database Requested");
+//            return 1;
+//        }
+//        if (tester != 0) {
+//            Log.d(PDE, "Error -- Bad Benchmark Result");
+//            return 1;
+//        }
 
-        return 0;
+        Log.d(PocketBenchUtils.TAG, "End startQueries()");
+//        PocketBenchUtils.putMarker("{\"EVENT\":\"" + PocketBenchUtils.database + "_END\"}");
+//        PocketBenchUtils.putMarker("END: app finished\n");
+
+        return dataRows;
 
     }
 
-    private int sqlQueries(){
-
+    private ArrayList<RecyclerRow> sqlQueries(){
+        ArrayList<RecyclerRow> dataRows=new ArrayList<>();
         SQLiteDatabase db = context.openOrCreateDatabase("SQLBenchmark",0,null);
         int sqlException = 0;
 
@@ -85,14 +91,28 @@ public class Queries {
 
                             if(query.contains("SELECT")){
                                 Cursor cursor = db.rawQuery(query,null);
+//                                Log.d(PocketBenchUtils.TAG, "Running "+query);
                                 if(cursor.moveToFirst()) {
                                     int numColumns = cursor.getColumnCount();
-                                    do {
-                                        int j=0;
-                                        while (j< numColumns) {
-                                            j++;
+                                    StringBuilder sb = new StringBuilder();
+                                    for(int r=0;r<cursor.getCount();r++){ //Iterate over each row in the cursor
+                                        for(int c=0;c<numColumns;c++){
+                                            sb.append(cursor.getString(c));
+                                            sb.append("|");
                                         }
-                                    } while(cursor.moveToNext());
+                                        //NOTE If CRLF is required, add here
+                                        cursor.moveToNext();
+                                    }
+//                                    Log.d(PocketBenchUtils.TAG,sb.toString());
+                                    dataRows.add(new RecyclerRow(sb.toString()));
+////                                    Log.d(PocketBenchUtils.TAG, "Returned columns "+numColumns);
+//                                    do {
+//                                        Log.d(PocketBenchUtils.TAG, cursor.getString(cursor.getColumnIndex("DAT_STR_1")));
+//                                        int j=0;
+//                                        while (j< numColumns) {
+//                                            j++;
+//                                        }
+//                                    } while(cursor.moveToNext());
                                 }
                                 cursor.close();
 
@@ -104,6 +124,7 @@ public class Queries {
                         }
                         catch (SQLiteException e){
                             sqlException = 1;
+                            Log.e(PocketBenchUtils.TAG, e.getLocalizedMessage());
                             continue;
                         }
                         break;
@@ -114,9 +135,9 @@ public class Queries {
                             Object breakObject = operationJson.get("delta");
                             int breakTime = Integer.parseInt(breakObject.toString());
                             int tester = PocketBenchUtils.sleepThread(breakTime);
-                            if(tester != 0){
-                                return 1;
-                            }
+//                            if(tester != 0){
+//                                return 1;
+//                            }
 
                         }
                         sqlException = 0;
@@ -124,7 +145,7 @@ public class Queries {
                     }
                     default:
                         db.close();
-                        return 1;
+//                        return 1;
                 }
 
             }
@@ -133,10 +154,14 @@ public class Queries {
         } catch (JSONException e) {
             e.printStackTrace();
             db.close();
-            return 1;
+//            return 1;
         }
-        db.close();
-        return 0;
+        finally {
+            db.close();
+            return dataRows;
+        }
+//        db.close();
+//        return 0;
     }
 
     private int bdbQueries(){

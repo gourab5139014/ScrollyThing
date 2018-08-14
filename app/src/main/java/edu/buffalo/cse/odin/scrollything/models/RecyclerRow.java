@@ -9,6 +9,9 @@ public class RecyclerRow {
         this.id = id;
     }
 
+    public RecyclerRow(String text){
+        this(text,0);
+    }
     public String getText() {
         return text;
     }

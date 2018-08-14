@@ -95,7 +95,7 @@ public class PocketBenchUtils {
         try {
             Thread.sleep(interval);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(PocketBenchUtils.TAG, e.getLocalizedMessage());
 //            putMarker("{\"EVENT\":\"DELAY_error\"}");
             return 1;
         }
